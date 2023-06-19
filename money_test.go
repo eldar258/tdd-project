@@ -46,3 +46,32 @@ func (m Money) Times(multiplier int) Money {
 func (m Money) Divide(divisor int) Money {
 	return Money{amount: m.amount / float64(divisor), currency: m.currency}
 }
+
+func TestAddition(t *testing.T) {
+	var portfolio Portfolio
+	var portfolioInDollars Money
+
+	fiveDollars := Money{amount: 5, currency: "USD"}
+	tenDollars := Money{amount: 10, currency: "USD"}
+	fifteenDollars := Money{amount: 15, currency: "USD"}
+
+	portfolio = portfolio.Add(fiveDollars)
+	portfolio = portfolio.Add(tenDollars)
+	portfolioInDollars = portfolio.Evaluate("USD")
+
+	assertEqual(t, fifteenDollars, portfolioInDollars)
+}
+
+type Portfolio []Money
+
+func (p Portfolio) Add(m Money) Portfolio {
+	return append(p, m)
+}
+
+func (p Portfolio) Evaluate(currency string) Money {
+	total := 0.0
+	for _, m := range p {
+		total += m.amount
+	}
+	return Money{amount: total, currency: currency}
+}
