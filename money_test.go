@@ -9,7 +9,7 @@ import (
 var bank s.Bank
 
 func init() {
-	bank := s.NewBank()
+	bank = s.NewBank()
 	bank.AddExchangeRate("EUR", "USD", 1.2)
 	bank.AddExchangeRate("USD", "KRW", 1100)
 }
@@ -49,12 +49,14 @@ func TestAddition(t *testing.T) {
 
 	portfolio = portfolio.Add(fiveDollars)
 	portfolio = portfolio.Add(tenDollars)
-	portfolioInDollars, _ := portfolio.Evaluate(bank, "USD")
 
+	portfolioInDollars, err := portfolio.Evaluate(bank, "USD")
+	assertNil(t, err)
 	assertEqual(t, fifteenDollars, *portfolioInDollars)
 }
 
 func TestAdditionOfDollarsAndEuros(t *testing.T) {
+	bank.AddExchangeRate("USD", "KRW", 1100)
 	var portfolio s.Portfolio
 
 	fiveDollars := s.NewMoney(5, "USD")
@@ -63,9 +65,9 @@ func TestAdditionOfDollarsAndEuros(t *testing.T) {
 	portfolio = portfolio.Add(tenEuros)
 
 	expectedValue := s.NewMoney(17, "USD")
-	actualValue, _ := portfolio.Evaluate(bank, "USD")
-
-	assertEqual(t, expectedValue, actualValue)
+	actualValue, err := portfolio.Evaluate(bank, "USD")
+	assertNil(t, err)
+	assertEqual(t, expectedValue, *actualValue)
 }
 
 func TestAdditionOfDollarsAndWons(t *testing.T) {
@@ -77,9 +79,9 @@ func TestAdditionOfDollarsAndWons(t *testing.T) {
 	portfolio = portfolio.Add(tenEuros)
 
 	expectedValue := s.NewMoney(2200, "KRW")
-	actualValue, _ := portfolio.Evaluate(bank, "KRW")
-
-	assertEqual(t, expectedValue, actualValue)
+	actualValue, err := portfolio.Evaluate(bank, "KRW")
+	assertNil(t, err)
+	assertEqual(t, expectedValue, *actualValue)
 }
 
 func TestAdditionWithMultipleMissingRates(t *testing.T) {
