@@ -12,7 +12,7 @@ jobs:
     name: Build
     strategy:
       matrix:
-        platform: ['ubuntu-latest', 'windows-latest  ', 'debain-latest', 'macos-latest']
+        platform: ['ubuntu-latest', 'windows-latest', 'debian-latest', 'macos-latest']
     runs-on: ${{matrix.platform}}
     steps:
     - name: Set up Go
